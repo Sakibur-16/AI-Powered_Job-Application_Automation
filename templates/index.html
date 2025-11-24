@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    <style>
+        .dark {
+            color-scheme: dark;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors duration-300">
+    <!-- Header -->
+    <div class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg">
+                        <svg class="text-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white">AI Job Tracker</h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">Smart job search & application management</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="resumeInfo" class="text-right hidden">
+                        <p class="font-semibold text-slate-800 dark:text-white" id="userName"></p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400"><span id="skillCount">0</span> skills tracked</p>
+                    </div>
+                    <button id="darkModeToggle" class="p-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                        <svg class="dark:hidden" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg class="hidden dark:block" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="max-w-7xl mx-auto px-6 mt-6">
+        <div class="flex gap-2 bg-white dark:bg-slate-800 rounded-lg p-1 shadow-sm">
+            <button onclick="switchTab('upload')" data-tab="upload" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Resume
+            </button>
+            <button onclick="switchTab('jobs')" data-tab="jobs" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                Find Jobs
+            </button>
+            <button onclick="switchTab('tracker')" data-tab="tracker" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Applications
+            </button>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Upload Tab -->
+        <div id="uploadTab" class="tab-content">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
+                <div id="uploadSection">
+                    <div class="text-center mb-8">
+                        <svg class="mx-auto text-blue-500 mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Upload Your Resume</h2>
+                        <p class="text-slate-600 dark:text-slate-400">AI will extract your skills and experience</p>
+                    </div>
+                    
+                    <label class="block border-3 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-12 text-center hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                        <input type="file" id="resumeFile" accept=".txt,.pdf,.doc,.docx" class="hidden" onchange="handleFileUpload()">
+                        <svg id="uploadIcon" class="mx-auto text-slate-400 mb-4" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <div id="loadingIcon" class="hidden">
+                            <svg class="animate-spin mx-auto text-blue-500 mb-4" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                            </svg>
+                        </div>
+                        <p class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                            <span id="uploadText">Click to upload resume</span>
+                        </p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">TXT, PDF, DOC, or DOCX</p>
+                    </label>
+                </div>
+
+                <div id="resumeSection" class="hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Resume Loaded</h2>
+                        <button onclick="clearResume()" class="text-red-600 dark:text-red-400 hover:text-red-700 text-sm font-medium">
+                            Remove Resume
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-2">Personal Info</h3>
+                            <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4 space-y-2 text-slate-700 dark:text-slate-300">
+                                <p><strong>Name:</strong> <span id="resumeName"></span></p>
+                                <p><strong>Email:</strong> <span id="resumeEmail"></span></p>
+                                <p><strong>Phone:</strong> <span id="resumePhone"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-2">Extracted Skills (<span id="skillsCount">0</span>)</h3>
+                            <div id="skillsList" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        
+                        <div id="experienceSection">
+                            <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-2">Experience</h3>
+                            <ul id="experienceList" class="space-y-2 text-slate-600 dark:text-slate-400"></ul>
+                        </div>
+                        
+                        <button onclick="switchTab('jobs')" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                            Start Job Search
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs Tab -->
+        <div id="jobsTab" class="tab-content hidden">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex gap-3">
+                    <input type="text" id="searchQuery" placeholder="Enter job keywords (e.g., 'Software Engineer' or 'Marketing Manager')" 
+                           class="flex-1 px-4 py-3 border border-slate-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           onkeypress="if(event.key === 'Enter') searchJobs()">
+                    <button onclick="searchJobs()" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2">
+                        <svg id="searchIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <svg id="searchLoading" class="hidden animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+                <p id="resumeWarning" class="text-sm text-amber-600 dark:text-amber-400 mt-2 hidden">Please upload your resume first</p>
+            </div>
+
+            <div id="jobsList" class="grid gap-4"></div>
+            
+            <div id="noJobs" class="text-center py-12 text-slate-500 dark:text-slate-400">
+                <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <p>Search for jobs to get started</p>
+            </div>
+        </div>
+
+        <!-- Tracker Tab -->
+        <div id="trackerTab" class="tab-content hidden">
+            <div class="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">Application Tracker</h2>
+                
+                <div class="grid grid-cols-5 gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                            Applied
+                            <span id="appliedCount" class="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-full">0</span>
+                        </h3>
+                        <div id="appliedColumn" class="space-y-3"></div>
+                    </div>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                            Screening
+                            <span id="screeningCount" class="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-full">0</span>
+                        </h3>
+                        <div id="screeningColumn" class="space-y-3"></div>
+                    </div>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                            Interview
+                            <span id="interviewCount" class="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-full">0</span>
+                        </h3>
+                        <div id="interviewColumn" class="space-y-3"></div>
+                    </div>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                            Offer
+                            <span id="offerCount" class="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-full">0</span>
+                        </h3>
+                        <div id="offerColumn" class="space-y-3"></div>
+                    </div>
+                    
+                    <div class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
+                        <h3 class="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center justify-between">
+                            Rejected
+                            <span id="rejectedCount" class="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 px-2 py-1 rounded-full">0</span>
+                        </h3>
+                        <div id="rejectedColumn" class="space-y-3"></div>
+                    </div>
+                </div>
+                
+                <div id="noApplications" class="text-center py-12 text-slate-500 dark:text-slate-400">
+                    <svg class="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <p>No applications yet. Start applying to jobs!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cover Letter Modal -->
+    <div id="coverLetterModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-6 z-50">
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-2xl font-bold text-slate-800 dark:text-white">Cover Letter</h3>
+                <button onclick="closeCoverLetterModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1">
+                <div id="coverLetterLoading" class="flex items-center justify-center py-12">
+                    <svg class="animate-spin text-blue-500" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                    </svg>
+                </div>
+                <div id="coverLetterContent" class="hidden whitespace-pre-wrap text-slate-700 dark:text-slate-300"></div>
+            </div>
+            
+            <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex gap-3">
+                <button onclick="copyCoverLetter()" class="flex-1 bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all">
+                    Copy to Clipboard
+                </button>
+                <button onclick="applyAndTrack()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                    Apply & Track
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
