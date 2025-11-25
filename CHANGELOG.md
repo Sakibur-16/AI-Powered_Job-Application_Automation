@@ -117,5 +117,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Patch (1.0.X)**: Bug fixes, minor improvements
 
 ### Changelog Links
-- [Unreleased]: https://github.com/yourusername/ai-job-tracker/compare/v1.0.0...HEAD
-- [1.0.0]: https://github.com/yourusername/ai-job-tracker/releases/tag/v1.0.0
+- [Unreleased]: https://github.com/Sakibur-16/AI-Powered_Job-Application_Automation/compare/v1.0.0...HEAD
+- [1.0.0]: https://github.com/Sakibur-16/AI-Powered_Job-Application_Automation/releases/tag/v1.0.0
